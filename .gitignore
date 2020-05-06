@@ -1,0 +1,13 @@
+#files, foleders to ignore
+/coverage/lcov.info
+.env
+package-lock.json
+
+# dependencies
+/node_modules
+client_ui/node_modules
+
+yarn.lock*
+
+#intelliJ files
+.idea*

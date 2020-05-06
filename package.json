@@ -1,0 +1,27 @@
+{
+  "name": "sonarqube-codeSmells-codeCoverage",
+  "version": "1.0.0",
+  "description": "code smells, code coverage with mocha test cases",
+  "main": "server.js",
+  "scripts": {
+    "server": "nodemon -r dotenv/config server.js",
+    "client": "cd client_ui && yarn start",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "sonar-scanner-report": "sonar-scanner"
+  },
+  "keywords": [],
+  "author": "Minal Narsale",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.5",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "email-existence": "^0.1.6",
+    "express": "^4.17.1",
+    "nodemailer": "^6.4.6"
+  },
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "nodemon": "^2.0.2"
+  }
+}
