@@ -1,5 +1,5 @@
 {
-  "name": "myfirstreact",
+  "name": "sonarqube-codeSmells-codeCoverage",
   "version": "0.1.0",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",

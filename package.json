@@ -4,10 +4,12 @@
   "description": "code smells, code coverage with mocha test cases",
   "main": "server.js",
   "scripts": {
+    "test": "mocha --timeout 30000 ./tests/**/*.test.js --exit",
+    "coverage": "nyc --reporter=lcov --reporter=text-lcov npm test",
     "server": "nodemon -r dotenv/config server.js",
     "client": "cd client_ui && yarn start",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "sonar-scanner-report": "sonar-scanner"
+    "sonar-scanner-report": "concurrently --kill-others-on-fail \"yarn coverage\" \"sonar-scanner\""
   },
   "keywords": [],
   "author": "Minal Narsale",
@@ -21,7 +23,12 @@
     "nodemailer": "^6.4.6"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "concurrently": "^5.1.0",
-    "nodemon": "^2.0.2"
+    "mocha": "^7.1.2",
+    "nodemon": "^2.0.2",
+    "nyc": "^15.0.1",
+    "sinon": "^9.0.2",
+    "supertest": "^4.0.2"
   }
 }

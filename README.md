@@ -70,3 +70,7 @@
     access the url to get the report.
     
     e.g http://localhost:9000/dashboard?id=sonar-test-app
+    
+#Code Coverage
+ 1)run the 'coverage' script which is mentioned in package.json
+ 2)find the code-coverage report at <project folder>\coverage\lcov-report\index.html

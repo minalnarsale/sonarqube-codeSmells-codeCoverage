@@ -11,3 +11,8 @@ yarn.lock*
 
 #intelliJ files
 .idea*
+
+
+*.log
+coverage/
+.nyc_output/

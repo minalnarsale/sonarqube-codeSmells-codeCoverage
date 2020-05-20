@@ -2,17 +2,16 @@ const amqp = require('amqplib/callback_api');
 const nodemailer = require('nodemailer');
 const emailExistence = require("email-existence");
 
-let sendMail = function(req, res) {
+// create reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'minalnarsale@gmail.com',
+        pass: 'Career@2020'
+    }
+});
 
-    /*
-    email-existence with async/await - which is not working
-    console.log('email : ' + req.body.emailTo.toString());
-    let temp = await emailExistence.check(req.body.emailTo.toString(), (err, res) => {
-        console.log('res : ' + JSON.stringify(res));
-        console.log('res : ' + res);
-        return res;
-    });
-    console.log('validateEmail existence: ' + temp);*/
+let sendMailTo = function(req, res) {
 
     const output = `
         <h3>${req.body.message}</h3>
@@ -24,14 +23,6 @@ let sendMail = function(req, res) {
           <li>Phone: +91 9503668540</li>
         </ul>
       `;
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: '{yourEmailId}',
-            pass: '{yourPassword}'
-        }
-    });
 
     // setup email data with unicode symbols
     let mailOptions = {
@@ -45,42 +36,47 @@ let sendMail = function(req, res) {
     //checking if email-id does exist
     emailExistence.check(req.body.emailTo.toString(), (err1, res1) => {
         if(res1) {
-            console.log('sending mail');
-            // send mail with defined transport object
+            // send mail with defined transporter object
             transporter.sendMail(mailOptions, function (err, info) {
                 let msg = '';
                 let statusCode = 0;
                 if(err) {
                     statusCode = 500;
-                    msg = 'mail has not been sent to ' + req.body.emailTo;
-                    //res.status(500).json({'message': msg});
+                    msg = `mail has not been sent to ${req.body.emailTo}`;
                 } else {
                     statusCode = 200;
-                    msg = 'mail has been sent to ' + req.body.emailTo;
+                    msg = `mail has been sent to ${req.body.emailTo}`;
                     console.log(info);
                 }
                 amqp.connect('amqp://localhost', function(error0, connection) {
+
                     if (error0) {
-                        throw error0;
+                        statusCode = 200;
+                        msg = msg + `\nRabbitMQ is down.\nMail status did not register in RabbitMQ.`;
+                        return res.status(statusCode).send(msg);
                     }
                     connection.createChannel(function(error1, channel) {
+
                         if (error1) {
-                            throw error1;
+                            statusCode = 200;
+                            msg = msg + '\n mail status did not register in RabbitMQ,' +
+                                ' RabbitMQ-channel did not get created';
+                            return res.status(statusCode).send(msg);
                         }
                         const queue = 'mailTo';
                         channel.assertQueue(queue, {
                             durable: false
                         });
                         channel.sendToQueue(queue, Buffer.from(msg));
-                        console.log('setting rabbitmq message');
-                        res.status(statusCode).json({'message': msg});
+                        console.log(`setting rabbitmq message : ${msg}`);
+                        res.status(statusCode).send(msg);
                     });
                 });
             });
         } else {
-            res.status(500).json({'message': 'email is incorrect'});
+            res.status(500).send('email is incorrect');
         }
     });
 };
 
-module.exports = sendMail;
+module.exports = { sendMailTo, transporter };

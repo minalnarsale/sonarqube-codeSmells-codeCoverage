@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sendMail = require('./utility/queues/sendMail');
+const routes = require('./routes');
 
 const app = express();
 
@@ -16,7 +16,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// API calls
-app.post('/api/sendEmail', (req, res) => sendMail(req, res));
+//defining routes for API, tests-cases, swagger-documentation, code-coverage report
+app.use('/', routes);
 
 app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
+
+module.exports = app;
